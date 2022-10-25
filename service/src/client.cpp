@@ -116,7 +116,7 @@ namespace client {
 void receive(JsonClient& jsonClient, const QJsonObject& message)
 {
     const QString method(message.value(QLatin1String("method")).toString());
-
+    qDebug() << Q_FUNC_INFO << "handling a message using " << method << ", payload: " << message.value(QLatin1String("payload")).toString();
     if(method == QLatin1String("get")) {
         handleGet(jsonClient, message);
     }

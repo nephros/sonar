@@ -199,6 +199,8 @@ void setBluetoothState(const QJsonValue& payload)
                            QVariant::fromValue(QDBusVariant(payload.toVariant())));
     }
     else {
+        qDebug() << "Getting bluez interface (" << SERVICE_ORG_BLUEZ << " " << PATH_ORG_BLUEZ_HCI0 << " " << INTERFACE_ORG_FREEDESKTOP_DBUS_PROPERTIES << ") failed";
+        qDebug() << "Trying connman (" << SERVICE_NET_CONNMAN << " " << PATH_NET_CONNMAN_TECHNOLOGY_BLUETOOTH << " " << INTERFACE_NET_CONNMAN_TECHNOLOGY << ")";
         QDBusInterface dbusInterfaceOld(SERVICE_NET_CONNMAN,
                                         PATH_NET_CONNMAN_TECHNOLOGY_BLUETOOTH,
                                         INTERFACE_NET_CONNMAN_TECHNOLOGY,
@@ -211,57 +213,67 @@ void setBluetoothState(const QJsonValue& payload)
 
 void setWifiState(const QJsonValue& payload)
 {
+    QDBusReply<bool> reply;
     QDBusInterface dbusInterface(SERVICE_NET_CONNMAN,
                                  PATH_NET_CONNMAN_TECHNOLOGY_WIFI,
                                  INTERFACE_NET_CONNMAN_TECHNOLOGY,
                                  QDBusConnection::systemBus());
-    dbusInterface.call(METHOD_SETPROPERTY,
+    reply = dbusInterface.call(METHOD_SETPROPERTY,
                        ARG_POWERED,
                        QVariant::fromValue(QDBusVariant(payload.toVariant())));
+    if (!reply.isValid()) qDebug() << Q_FUNC_INFO << "failed:" << reply.error().name() << reply.error().message();
 }
 
 void setCellularState(const QJsonValue& payload)
 {
+    QDBusReply<bool> reply;
     QDBusInterface dbusInterface(SERVICE_NET_CONNMAN,
                                  PATH_NET_CONNMAN_TECHNOLOGY_CELLULAR,
                                  INTERFACE_NET_CONNMAN_TECHNOLOGY,
                                  QDBusConnection::systemBus());
-    dbusInterface.call(METHOD_SETPROPERTY,
+    reply = dbusInterface.call(METHOD_SETPROPERTY,
                        ARG_POWERED,
                        QVariant::fromValue(QDBusVariant(payload.toVariant())));
+    if (!reply.isValid()) qDebug() << Q_FUNC_INFO << "failed:" << reply.error().name() << reply.error().message();
 }
 
 void setCellularRadioTechnology(const QJsonValue& payload)
 {
+    QDBusReply<bool> reply;
     QDBusInterface dbusInterface(SERVICE_ORG_OFONO,
                                  PATH_RIL_0,
                                  INTERFACE_ORG_OFONO_RADIOSETTINGS,
                                  QDBusConnection::systemBus());
-    dbusInterface.call(METHOD_SETPROPERTY,
+    reply = dbusInterface.call(METHOD_SETPROPERTY,
                        ARG_TECHNOLOGYPREFERENCE,
                        QVariant::fromValue(QDBusVariant(payload.toVariant())));
+    if (!reply.isValid()) qDebug() << Q_FUNC_INFO << "failed:" << reply.error().name() << reply.error().message();
 }
 
 void setFlightmodeState(const QJsonValue& payload)
 {
+    QDBusReply<bool> reply;
     QDBusInterface dbusInterface(SERVICE_COM_NOKIA_MCE,
                                  PATH_COM_NOKIA_MCE_REQUEST,
                                  INTERFACE_COM_NOKIA_MCE_REQUEST,
                                  QDBusConnection::systemBus());
-    dbusInterface.call(METHOD_REQ_RADIO_STATES_CHANGE,
+    reply = dbusInterface.call(METHOD_REQ_RADIO_STATES_CHANGE,
                        static_cast<quint32>(payload.toBool() ? 0 : 1),
                        static_cast<quint32>(1));
+    if (!reply.isValid()) qDebug() << Q_FUNC_INFO << "failed:" << reply.error().name() << reply.error().message();
 }
 
 void setWifiTethering(const QJsonValue& payload)
 {
+    QDBusReply<bool> reply;
     QDBusInterface dbusInterface(SERVICE_NET_CONNMAN,
                                  PATH_NET_CONNMAN_TECHNOLOGY_WIFI,
                                  INTERFACE_NET_CONNMAN_TECHNOLOGY,
                                  QDBusConnection::systemBus());
-    dbusInterface.call(METHOD_SETPROPERTY,
+    reply  = dbusInterface.call(METHOD_SETPROPERTY,
                        ARG_TETHERING,
                        QVariant::fromValue(QDBusVariant(payload.toVariant())));
+    if (!reply.isValid()) qDebug() << Q_FUNC_INFO << "failed:" << reply.error().name() << reply.error().message();
 }
 
 void commandSendSms(const QJsonValue& payload)

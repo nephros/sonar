@@ -51,6 +51,7 @@ namespace server {
 
 bool start()
 {
+    qDebug() << "Starting up...";
     QObject::connect(&jsonServer, &JsonServer::newClient,  [](JsonClient& jsonClient) {
         QObject::connect(&jsonClient, &JsonClient::received, [&jsonClient](const QJsonObject& message) {
             sonar::client::receive(jsonClient, message);
